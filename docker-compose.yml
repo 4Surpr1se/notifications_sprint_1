@@ -1,0 +1,73 @@
+services:
+
+  rabbitmq:
+    image: rabbitmq:3-management  # Includes the management plugin for monitoring
+    ports:
+      - "${RABBITMQ_CONNECTION_PORT}:${RABBITMQ_CONNECTION_PORT}" # Port for RabbitMQ
+      - "${RABBITMQ_MANAGEMENT_PORT}:${RABBITMQ_MANAGEMENT_PORT}" # Port for the RabbitMQ Management UI
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "ping" ]
+      interval: 10s
+      retries: 5
+    env_file:
+      - .env
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  postgres:
+    image: postgres:13
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+    restart: unless-stopped  # Optional: Restart policy for resilience
+
+  fastapi_app:
+    build:
+      context: .
+      dockerfile: notification_gen_app/infra/Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    volumes:
+      - ./notification_gen_app:/notification_gen_app
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  consumer_service:
+    build:
+      context: .
+      dockerfile: consumer_messages/infra/Dockerfile
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - .env
+    volumes:
+      - ./consumer_messages:/consumer_messages
+
+  consumer_recorder_service:
+    build:
+      context: .
+      dockerfile: consumer_notification_recorder/infra/Dockerfile
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - .env
+    volumes:
+      - ./consumer_notification_recorder:/consumer_notification_recorder
+
+
+volumes:
+  rabbitmq_data:
+  postgres_data:
