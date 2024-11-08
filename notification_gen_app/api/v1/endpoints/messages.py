@@ -1,9 +1,9 @@
 from fastapi import Depends, APIRouter, HTTPException
 from config.settings import settings
-from notification_gen_app.api.v1.dependencies import get_message_service, get_user_info
+from notification_gen_app.api.v1.dependencies import get_user_info
 from notification_gen_app.schemas.messages import InstantMessageRequest, WelcomeMessageRequest, \
     WelcomeLinkMessageRequest
-from notification_gen_app.services.messages import MessageService
+from notification_gen_app.services.messages import MessageService, MessageSendException, get_message_service
 from notification_gen_app.utils.short_links import generate_confirmation_link
 from uuid import UUID
 
@@ -20,10 +20,8 @@ async def create_instant_message(
     try:
         result = await message_service.send_single_message(content_id, message, 'email', settings.instant_message_queue)
         return result
-    except HTTPException as e:
-        raise e  # Propagate HTTPException to FastAPI's error handler
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+    except MessageSendException as exception:
+        raise HTTPException(status_code=500, detail=str(exception))
 
 
 # Endpoint for sending a welcome message
@@ -44,7 +42,5 @@ async def create_welcome_message(
         result = await message_service.send_welcome_message(email, message_data, 'email',
                                                             settings.instant_message_queue)
         return result
-    except HTTPException as e:
-        raise e  # Propagate HTTPException to FastAPI's error handler
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+    except MessageSendException as exception:
+        raise HTTPException(status_code=500, detail=str(exception))
