@@ -10,7 +10,9 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from notification_gen_app.api.v1.dependencies import set_pika_connection, close_pika_connection
 from notification_gen_app.api.v1.endpoints.messages import router as messages_router
+from notification_gen_app.api.v1.endpoints.periodic_messages import router as periodic_messages_router
 from notification_gen_app.config.initialization import initialize_rabbitmq
+from notification_gen_app.config.scheduler_settings import scheduler
 from notification_gen_app.config.settings import settings
 
 logging.basicConfig(level=logging.INFO)
@@ -33,6 +35,8 @@ app = FastAPI(
     default_response_class=ORJSONResponse,
     lifespan=lifespan
 )
+
+scheduler.start()
 
 origins = [
     "http://localhost",
@@ -68,6 +72,7 @@ app.add_middleware(
 
 
 app.include_router(messages_router, prefix='/api/v1', tags=['instant_messages'])
+app.include_router(periodic_messages_router, prefix='/api/v1', tags=['periodic_messages'])
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8080)

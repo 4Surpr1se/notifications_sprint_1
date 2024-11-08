@@ -18,6 +18,8 @@ pydantic = {extras = ["email"], version = "^2.9.2"}
 orjson = "^3.10.10"
 pyjwt = "^2.9.0"
 aio-pika = "^9.4.3"
+apscheduler = "^3.10.4"
+redis = "^5.2.0"
 
 
 [build-system]
