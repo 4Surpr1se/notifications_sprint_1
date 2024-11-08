@@ -10,3 +10,10 @@ class WelcomeMessageRequest(BaseModel):
 class WelcomeLinkMessageRequest(BaseModel):
     message_data: dict
     confirmation_link: AnyUrl
+
+class PeriodicTaskParamsRequest(BaseModel):
+    name: str
+    interval_in_seconds: int
+
+class PeriodicTaskIdRequest(BaseModel):
+    task_id: str

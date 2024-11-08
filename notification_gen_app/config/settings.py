@@ -37,6 +37,10 @@ class Settings(BaseSettings):
     expires_in: timedelta = timedelta(hours=48)
     confirmation_base_url: str = "http://localhost:8000/confirm-email"
 
+    # Redis
+    redis_host: str = "redis"
+    redis_port: int = "6379"
+
     @property
     def rabbitmq_connection_url(self) -> str:
         return f"amqp://{self.rabbitmq_default_user}:{self.rabbitmq_default_pass}@{self.rabbitmq_host}:{self.rabbitmq_connection_port}/"

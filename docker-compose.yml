@@ -1,5 +1,14 @@
 services:
 
+  redis:
+    image: redis:7
+    restart: always
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
   rabbitmq:
     image: rabbitmq:3-management  # Includes the management plugin for monitoring
     ports:

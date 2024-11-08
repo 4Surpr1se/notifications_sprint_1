@@ -1,12 +1,13 @@
 import jwt
 import aio_pika
-import asyncio
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jwt import PyJWTError
 
+from notification_gen_app.config import scheduler_settings
 from notification_gen_app.config.settings import settings
 from notification_gen_app.services.messages import MessageService
+from notification_gen_app.services.periodic_messages import PeriodicTaskService
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -31,6 +32,12 @@ async def get_message_service(rabbitmq_channel=Depends(get_rabbitmq_channel)):
         # Ensure the channel and connection are closed in the cleanup of get_rabbitmq_channel
         pass  # Cleanup is handled by get_rabbitmq_channel
 
+async def get_periodic_task_service():
+    task_service = PeriodicTaskService(scheduler=scheduler_settings.scheduler)
+    try:
+        yield task_service
+    finally:
+        pass
 
 def get_user_info(token: str = Depends(oauth2_scheme)):
     try:
