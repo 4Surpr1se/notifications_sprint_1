@@ -11,10 +11,11 @@ from consumer_messages.services.email_service import send_email, get_template, r
 
 class InstantConsumer(BaseConsumer):
     def __init__(self):
-        super().__init__(queue_name=settings.instant_message_queue)
+        super().__init__(queue_name=settings.instant_message_queue,
+                         queue_name_dlq=settings.instant_message_dlq)
 
     async def handle_message(self, message: aio_pika.IncomingMessage):
-        async with message.process():
+        async with message.process(ignore_processed=True):
             try:
                 message_data = json.loads(message.body.decode())
                 logging.info(f"Received message: {message_data}")
@@ -38,4 +39,5 @@ class InstantConsumer(BaseConsumer):
 
 
             except Exception as e:
+                await message.reject(requeue=False)
                 logging.error(f"Error handling message: {str(e)}")

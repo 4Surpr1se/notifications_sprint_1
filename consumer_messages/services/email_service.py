@@ -14,6 +14,7 @@ env = Environment(loader=FileSystemLoader("templates"))
 
 def get_template(message_type, message_transfer):
     try:
+        # TODO path
         template_path = f"{message_transfer}/{message_type}.html"
         template = env.get_template(template_path)
         return template
@@ -34,6 +35,7 @@ async def send_email(recipient: str, rendered_content: str, subject: Optional[st
     :param rendered_content: The HTML content rendered by Jinja.
     :param subject: The subject of the email.
     """
+
     # Setup the MIME message
     msg = MIMEMultipart("alternative")
     msg["From"] = settings.smtp_email
