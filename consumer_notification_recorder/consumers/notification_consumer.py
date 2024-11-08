@@ -10,10 +10,12 @@ from consumer_notification_recorder.services.notification_recorder_service impor
 
 class NotificationConsumer(BaseConsumer):
     def __init__(self):
-        super().__init__(queue_name=settings.instant_notification_queue)
+        super().__init__(queue_name=settings.instant_notification_queue,
+                         queue_name_dlq=settings.instant_notification_dlq)
 
     async def handle_message(self, message: aio_pika.IncomingMessage):
-        async with message.process():
+
+        async with message.process(ignore_processed=True):
             try:
                 message_data = json.loads(message.body.decode())
                 logging.info(f"Received message: {message_data}")
@@ -33,4 +35,6 @@ class NotificationConsumer(BaseConsumer):
                 )
 
             except Exception as e:
+                await message.reject(requeue=False)
                 logging.error(f"Error handling message: {str(e)}")
+

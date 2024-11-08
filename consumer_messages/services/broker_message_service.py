@@ -1,7 +1,9 @@
 import json
 import aio_pika
 from fastapi import HTTPException
-from consumer_messages.config.broker_connection import get_rabbitmq_channel
+
+from consumer_messages.dependencies.dependencies import get_rabbitmq_channel
+
 
 async def send_message_to_broker(message: dict, queue_name: str, persistent: bool = True):
     try:
@@ -27,4 +29,5 @@ async def send_message_to_broker(message: dict, queue_name: str, persistent: boo
         return {"status": "Message sent to broker", "data": message_body}
 
     except Exception as e:
+        # ???????????????????????????????????????????????????????????
         raise HTTPException(status_code=500, detail=f"Failed to send message to broker: {str(e)}")
