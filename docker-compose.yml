@@ -1,4 +1,33 @@
 services:
+  auth_service:
+    build:
+      context: .
+      dockerfile: auth_service/src/Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "8081:8081" #TODO to delete on prod
+    depends_on:
+      db_auth:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  db_auth:
+    image: postgres:15
+    container_name: db_auth
+    environment:
+      POSTGRES_DB: ${AUTH_POSTGRES_DB}
+      POSTGRES_USER: ${AUTH_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${AUTH_POSTGRES_PASSWORD}
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB'" ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    restart: always
+    ports:
+      - "5433:5432" #TODO to delete on prod
 
   redis:
     image: redis:7
@@ -26,7 +55,7 @@ services:
   postgres:
     image: postgres:13
     ports:
-      - "5432:5432"
+      - "5432:5432" #TODO to delete on prod
     volumes:
       - postgres_data:/var/lib/postgresql/data
     env_file:
@@ -43,7 +72,7 @@ services:
       context: .
       dockerfile: notification_gen_app/infra/Dockerfile
     ports:
-      - "8080:8080"
+      - "8080:8080" #TODO to delete on prod
     env_file:
       - .env
     volumes:
