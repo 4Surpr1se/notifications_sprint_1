@@ -6,7 +6,7 @@ services:
     env_file:
       - .env
     ports:
-      - "8081:8081"
+      - "8081:8081" #TODO to delete on prod
     depends_on:
       db_auth:
         condition: service_healthy
@@ -55,7 +55,7 @@ services:
   postgres:
     image: postgres:13
     ports:
-      - "5432:5432"
+      - "5432:5432" #TODO to delete on prod
     volumes:
       - postgres_data:/var/lib/postgresql/data
     env_file:
@@ -72,7 +72,7 @@ services:
       context: .
       dockerfile: notification_gen_app/infra/Dockerfile
     ports:
-      - "8080:8080"
+      - "8080:8080" #TODO to delete on prod
     env_file:
       - .env
     volumes:
