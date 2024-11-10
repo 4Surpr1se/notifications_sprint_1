@@ -49,7 +49,7 @@ async def create_welcome_message(
 
 # Endpoint send notification for new comment to user's review(UGC-service)
 @router.post("/notification_about_new_comment/{review_id}/")
-async def create_instant_message(
+async def create_notification(
         review_id: UUID,
         message_service: MessageService = Depends(get_message_service),
         user_id: str = Body(embed=True)
