@@ -1,7 +1,7 @@
 import asyncio
 import logging
 
-from consumer_notification_recorder.consumers.notification_consumer import NotificationConsumer, NotificationConsumerDLQ
+from consumer_notification_recorder.consumers.notification_consumer import NotificationConsumer
 from consumer_notification_recorder.config.postgresql import init_db
 
 # from consumers.scheduled_consumer import ScheduledConsumer
@@ -12,8 +12,7 @@ logging.basicConfig(level=logging.INFO)
 
 async def main():
     await init_db()
-    consumers = [NotificationConsumer(),
-                 NotificationConsumerDLQ()
+    consumers = [NotificationConsumer()
                  # ScheduledConsumer(),
                  # NotificationConsumer()
                  ]
