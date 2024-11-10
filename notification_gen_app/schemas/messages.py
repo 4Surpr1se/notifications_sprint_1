@@ -5,6 +5,9 @@ class InstantMessageRequest(BaseModel):
     email: EmailStr
     message_data: dict
 
+class NotificationAboutNewComment(BaseModel):
+    user_first_name: str
+    user_last_name: str
 
 class WelcomeMessageRequest(BaseModel):
     message_data: dict
