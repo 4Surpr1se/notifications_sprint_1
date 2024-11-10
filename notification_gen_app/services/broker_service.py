@@ -3,7 +3,7 @@ from enum import Enum
 import aio_pika
 from fastapi import Depends
 
-from notification_gen_app.api.v1.dependencies import get_rabbitmq_channel
+from notification_gen_app.api.v1.temporary_dependencies import get_rabbitmq_channel
 
 
 class DeliveryMode(Enum):

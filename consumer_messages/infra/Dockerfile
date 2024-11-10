@@ -15,6 +15,7 @@ RUN apt-get update && \
 # Install Poetry
 RUN curl -sSL https://install.python-poetry.org | python3 - \
     && ln -s /root/.local/bin/poetry /usr/local/bin/poetry
+COPY /base_config/ ./base_config/
 
 # Set the working directory
 WORKDIR /consumer_messages

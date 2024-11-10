@@ -12,6 +12,7 @@ RUN apt-get update && \
     wait-for-it && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+COPY /base_config/ ./base_config/
 
 # Set the working directory
 WORKDIR /notification_gen_app
@@ -21,6 +22,8 @@ COPY .env ./
 
 # Copy Poetry configuration files
 COPY /notification_gen_app/pyproject.toml /notification_gen_app/poetry.lock ./
+
+
 
 # Install Poetry and project dependencies
 RUN pip install --no-cache-dir --upgrade pip && \
