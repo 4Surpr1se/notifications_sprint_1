@@ -13,6 +13,8 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+COPY /base_config/ ./base_config/
+
 # Set the working directory
 WORKDIR /notification_gen_app
 
