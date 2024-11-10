@@ -3,7 +3,7 @@ import json
 from functools import lru_cache
 
 from fastapi import Depends
-from notification_gen_app.schemas.messages import InstantMessageRequest
+from notification_gen_app.schemas.messages import InstantMessageRequest, NotificationAboutNewComment
 from notification_gen_app.services.broker_service import RabbitMQService
 
 
@@ -42,6 +42,20 @@ class MessageService:
         except Exception as e:
             raise MessageSendException("Failed to send message to broker: %s" % str(e))
 
+    async def send_notification_about_new_comment(self, review_id, email, message_data: dict,
+                                                  message_transfer, queue_name):
+        try:
+            message_body = json.dumps({
+                "review_id": str(review_id),
+                "email": email,
+                "message_transfer": message_transfer,
+                "message_type": "instant",
+                "message_data": message_data
+            })
+            return await self.broker_service.publish(message_body, queue_name)
+
+        except Exception as e:
+            raise MessageSendException("Failed to send message to broker: %s" % str(e))
 
 @lru_cache
 def get_message_service(message_service: MessageService = Depends()):
