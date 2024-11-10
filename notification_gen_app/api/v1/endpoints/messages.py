@@ -3,8 +3,7 @@ import requests
 from fastapi import Depends, APIRouter, HTTPException, Body
 from config.settings import settings
 from notification_gen_app.api.v1.dependencies import get_user_info
-from notification_gen_app.schemas.messages import InstantMessageRequest, WelcomeMessageRequest, \
-    WelcomeLinkMessageRequest
+from notification_gen_app.schemas.messages import InstantMessageRequest, WelcomeMessageRequest
 from notification_gen_app.services.messages import MessageService, MessageSendException, get_message_service
 from notification_gen_app.utils.short_links import generate_confirmation_link
 from uuid import UUID
@@ -47,24 +46,22 @@ async def create_welcome_message(
     except MessageSendException as exception:
         raise HTTPException(status_code=500, detail=str(exception))
 
+
 # Endpoint send notification for new comment to user's review(UGC-service)
 @router.post("/notification_about_new_comment/{review_id}/")
 async def create_notification(
         review_id: UUID,
         message_service: MessageService = Depends(get_message_service),
-        user_id: str = Body(embed=True)
-):
+        user_id: str = Body(embed=True)):
     try:
         url = settings.get_user_info_url
         body = {'user_id': user_id}
 
-        response = requests.post(url, json=body, headers={"X-Request-Id":"RandomRequestId"})
+        response = requests.post(url, json=body, headers={"X-Request-Id": "RandomRequestId"})
 
         user_email = response.json().get('email')
         first_name = response.json().get('first_name')
         last_name = response.json().get('last_name')
-
-
 
         result = await message_service.send_notification_about_new_comment(review_id, user_email,
                                                                            {"first_name": first_name,

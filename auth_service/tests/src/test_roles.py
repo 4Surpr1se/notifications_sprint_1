@@ -1,5 +1,4 @@
 from http import HTTPStatus
-from select import select
 
 import pytest
 from sqlalchemy import select
@@ -87,7 +86,6 @@ class TestRoles:
 
     async def test_delete_not_existing_role(self, make_delete_request, access_token_of_superuser, db_session):
         role_executed_query = await db_session.execute(select(Role))
-        role = role_executed_query.scalars().first()
 
         response = await make_delete_request(
             f"{api_url}/00000000-706d-4a6a-ab9a-bff65ed787c7",

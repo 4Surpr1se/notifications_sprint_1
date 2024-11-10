@@ -1,12 +1,11 @@
 """init
 
 Revision ID: 0bedb03692bc
-Revises: 
+Revises:
 Create Date: 2024-09-02 21:16:55.169877
 
 """
 from typing import Sequence, Union
-
 import sqlalchemy as sa
 
 from alembic import op

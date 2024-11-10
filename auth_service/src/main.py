@@ -38,7 +38,7 @@ async def lifespan(app: FastAPI):
 def configure_tracer() -> None:
     trace.set_tracer_provider(TracerProvider(
         resource=Resource.create({SERVICE_NAME: "auth-service"}
-    )))
+                                 )))
     trace.get_tracer_provider().add_span_processor(
         BatchSpanProcessor(
             JaegerExporter(
@@ -47,6 +47,7 @@ def configure_tracer() -> None:
             )
         )
     )
+
 
 if config.enable_tracer:
     configure_tracer()
@@ -83,9 +84,10 @@ app.add_middleware(
 )
 
 tracer = trace.get_tracer(__name__)
+
+
 @app.middleware('http')
 async def before_request(request: Request, call_next):
-
     user_ip = request.headers.get('X-Forwarded-For')
     request_id = request.headers.get('X-Request-Id')
     request_url = str(request.url)
@@ -107,6 +109,7 @@ async def before_request(request: Request, call_next):
         response = await call_next(request)
 
     return response
+
 
 app.include_router(auth_router, prefix='/api/v1/auth', tags=['auth'])
 app.include_router(roles_router, prefix='/api/v1/roles', tags=['roles'])

@@ -37,4 +37,3 @@ class NotificationConsumer(BaseConsumer):
             except Exception as e:
                 await message.reject(requeue=False)
                 logging.error(f"Error handling message: {str(e)}")
-

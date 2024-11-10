@@ -18,7 +18,7 @@ class Settings(BaseProjectSettings):
 
     # Redis
     redis_host: str = "redis"
-    redis_port: int = "6379"
+    redis_port: int = 6379
 
     get_user_info_url: str = Field('http://auth_service:8081/api/v1/auth/get-user-info', alias='GET_USER_INFO_URL')
 

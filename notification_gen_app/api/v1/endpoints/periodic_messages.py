@@ -11,6 +11,7 @@ from uuid import UUID
 
 router = APIRouter()
 
+
 @router.post("/periodic_messages/pause_task/", status_code=status.HTTP_201_CREATED)
 async def pause_periodic_task(
         periodic_task_params: PeriodicTaskIdRequest,
@@ -23,6 +24,7 @@ async def pause_periodic_task(
         raise e
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
 
 @router.post("/periodic_messages/resume_task/", status_code=status.HTTP_201_CREATED)
 async def resume_periodic_task(
@@ -37,6 +39,7 @@ async def resume_periodic_task(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
+
 @router.post("/periodic_messages/delete_task/", status_code=status.HTTP_202_ACCEPTED)
 async def delete_periodic_task(
         periodic_task_params: PeriodicTaskIdRequest,
@@ -50,6 +53,7 @@ async def delete_periodic_task(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
+
 @router.post("/periodic_messages/tasks/", status_code=status.HTTP_200_OK)
 async def get_tasks(
         periodic_message_service: PeriodicTaskService = Depends(get_periodic_task_service)
@@ -62,13 +66,13 @@ async def get_tasks(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
+
 @router.post("/periodic_messages/{content_id}/", status_code=status.HTTP_201_CREATED)
 async def create_periodic_message(
         content_id: UUID,
         message: InstantMessageRequest,
         periodic_task_params: PeriodicTaskParamsRequest,
-        ):
-
+):
     try:
         # Get periodic_message_service, because scheduler doesn't supply dependencies
         periodic_message_service = PeriodicMessageService(broker_url=settings.rabbitmq_connection_url)

@@ -8,6 +8,8 @@ from notification_gen_app.config.settings import settings
 
 # TODO x-retry-count
 async def initialize_rabbitmq():
+    # 6 очередей, 2 эксченджа, из 6 - 2 dlq, 2 очереди для постинга запросов на отправку,
+    # 2 очереди для сохранения посланных сообщений в бд
     connection = await aio_pika.connect_robust(settings.rabbitmq_connection_url)
     async with connection:
         channel = await connection.channel()
@@ -18,7 +20,7 @@ async def initialize_rabbitmq():
         instant_message_dlq = await channel.declare_queue(settings.instant_message_dlq, durable=True)
         instant_notification_dlq = await channel.declare_queue(settings.instant_notification_dlq, durable=True)
 
-        instant_message_queue = await channel.declare_queue(
+        await channel.declare_queue(
             settings.instant_message_queue,
             durable=True,
             arguments={
@@ -27,7 +29,7 @@ async def initialize_rabbitmq():
             }
         )
 
-        scheduled_message_queue = await channel.declare_queue(
+        await channel.declare_queue(
             settings.scheduled_message_queue,
             durable=True,
             arguments={
@@ -36,7 +38,7 @@ async def initialize_rabbitmq():
             }
         )
 
-        instant_notification_queue = await channel.declare_queue(
+        await channel.declare_queue(
             settings.instant_notification_queue,
             durable=True,
             arguments={
@@ -45,7 +47,7 @@ async def initialize_rabbitmq():
             }
         )
 
-        scheduled_notification_queue = await channel.declare_queue(
+        await channel.declare_queue(
             settings.scheduled_notification_queue,
             durable=True,
             arguments={

@@ -10,7 +10,6 @@ from pydantic import ValidationError
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.future import select
-from starlette.responses import JSONResponse
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from src.core.config import config
@@ -103,7 +102,7 @@ class UserService:
 
             # Create a Pydantic model instance to validate the input data
             user = UserRegister(**user_data)
-        except ValidationError as e:
+        except ValidationError:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail="All the required fields must be filled in.",
@@ -131,7 +130,7 @@ class UserService:
             # Create a Pydantic model instance to validate the input data
             user = SocialUserRegister(**user_data)  # Validate the user data
 
-        except ValidationError as e:
+        except ValidationError:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail="All the required fields must be filled in.",
@@ -298,7 +297,7 @@ class UserService:
             if access_token_ttl > 0:
                 await self.redis.set(f"blacklist:{access_token}", "blacklisted", expire=access_token_ttl)
 
-        except Exception as e:
+        except Exception:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred during logout."
@@ -385,8 +384,8 @@ class UserService:
         # Convert the ORM instances to Pydantic models
         return [UserLoginHistoryResponse.from_orm(entry) for entry in login_history]
 
-    async def get_login_history_paginated(self, user_id: str, pagination: PaginationParams) -> tuple[
-        list[UserLoginHistory], int]:
+    async def get_login_history_paginated(self, user_id: str, pagination: PaginationParams)\
+            -> tuple[list[UserLoginHistory], int]:
         """
         Retrieve the login history for the specified user with pagination.
         """
@@ -510,6 +509,7 @@ class UserService:
             )
 
         return {"email": user.email, "first_name": user.first_name, "last_name": user.last_name}
+
 
 def get_user_service() -> UserService:
     return UserService(

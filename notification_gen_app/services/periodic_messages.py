@@ -7,12 +7,15 @@ import aio_pika
 
 from notification_gen_app.schemas.messages import InstantMessageRequest
 
+
 class PeriodicMessageService:
-    def __init__(self, broker_url:str,  delivery_mode=2):
+
+    def __init__(self, broker_url: str, delivery_mode=2):
         self.delivery_mode = delivery_mode
         self.broker_url = broker_url
 
-    async def send_single_message(self, content_id, message: InstantMessageRequest, message_transfer: str, queue_name: str):
+    async def send_single_message(self, content_id, message: InstantMessageRequest, message_transfer: str,
+                                  queue_name: str):
         # Create connection to broker, because scheduler doesn't supply dependencies
         connection = await aio_pika.connect_robust(self.broker_url)
         channel = await connection.channel()
@@ -31,7 +34,8 @@ class PeriodicMessageService:
             await channel.default_exchange.publish(
                 aio_pika.Message(
                     body=message_body.encode(),
-                    delivery_mode=aio_pika.DeliveryMode.PERSISTENT if self.delivery_mode == 2 else aio_pika.DeliveryMode.NON_PERSISTENT
+                    delivery_mode=aio_pika.DeliveryMode.PERSISTENT if
+                    self.delivery_mode == 2 else aio_pika.DeliveryMode.NON_PERSISTENT
                 ),
                 routing_key=queue_name
             )
@@ -45,6 +49,7 @@ class PeriodicMessageService:
             await channel.close()
             await connection.close()
 
+
 class PeriodicTaskService:
     def __init__(self, scheduler: AsyncIOScheduler):
         self.scheduler = scheduler
@@ -57,14 +62,14 @@ class PeriodicTaskService:
                           "is_active": False if job.next_run_time is None else True})
         return JSONResponse({'tasks': tasks})
 
-    async def delete_task(self, task_id: str)-> str:
+    async def delete_task(self, task_id: str) -> str:
         result = self.scheduler.remove_job(job_id=task_id)
         return str(result)
 
-    async def pause_task(self, task_id: str)-> str:
+    async def pause_task(self, task_id: str) -> str:
         result = self.scheduler.pause_job(job_id=task_id)
         return str(result)
 
-    async def resume_task(self, task_id: str)-> str:
+    async def resume_task(self, task_id: str) -> str:
         result = self.scheduler.resume_job(job_id=task_id)
         return str(result)

@@ -57,6 +57,7 @@ class LogoutRequest(RefreshTokenRequest):
 class GetUserInfoRequest(BaseModel):
     user_id: UUID
 
+
 class UserUpdateRequest(BaseModel):
     login: Optional[str] = None
     old_password: Optional[str] = None

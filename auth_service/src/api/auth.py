@@ -134,7 +134,7 @@ async def update_user_credentials(
 
     except HTTPException as e:
         raise e
-    except Exception as e:
+    except Exception:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred while updating user credentials."
@@ -169,7 +169,7 @@ async def get_user_login_history(
 
     except HTTPException as e:
         raise e
-    except Exception as e:
+    except Exception:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred while fetching the login history."

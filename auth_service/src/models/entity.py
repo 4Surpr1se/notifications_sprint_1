@@ -91,30 +91,30 @@ def create_partition(target, connection, **kw) -> None:
     """Creating partitions for user_device_type"""
     connection.execute(
         text(
-            """CREATE TABLE IF NOT EXISTS "user_login_history_mobile" 
-               PARTITION OF "user_login_history" 
+            """CREATE TABLE IF NOT EXISTS "user_login_history_mobile"
+               PARTITION OF "user_login_history"
                FOR VALUES IN ('mobile')"""
         )
     )
     connection.execute(
         text(
-            """CREATE TABLE IF NOT EXISTS "user_login_history_desktop" 
-               PARTITION OF "user_login_history" 
+            """CREATE TABLE IF NOT EXISTS "user_login_history_desktop"
+               PARTITION OF "user_login_history"
                FOR VALUES IN ('desktop')"""
         )
     )
     connection.execute(
         text(
-            """CREATE TABLE IF NOT EXISTS "user_login_history_tablet" 
-               PARTITION OF "user_login_history" 
+            """CREATE TABLE IF NOT EXISTS "user_login_history_tablet"
+               PARTITION OF "user_login_history"
                FOR VALUES IN ('tablet')"""
         )
     )
     # Adding a default partition for unknown device types
     connection.execute(
         text(
-            """CREATE TABLE IF NOT EXISTS "user_login_history_default" 
-               PARTITION OF "user_login_history" 
+            """CREATE TABLE IF NOT EXISTS "user_login_history_default"
+               PARTITION OF "user_login_history"
                DEFAULT"""
         )
     )

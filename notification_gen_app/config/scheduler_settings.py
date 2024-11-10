@@ -9,4 +9,3 @@ jobstores = {
 }
 
 scheduler = AsyncIOScheduler(timezone='Europe/Moscow', jobstores=jobstores)
-

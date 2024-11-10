@@ -20,7 +20,6 @@ class InstantConsumer(BaseConsumer):
                 message_data = json.loads(message.body.decode())
                 logging.info(f"Received message: {message_data}")
 
-                content_id = message_data.get("content_id")
                 recipient = message_data.get("email")
                 message_type = message_data.get("message_type")
                 message_transfer = message_data.get("message_transfer")
@@ -36,7 +35,6 @@ class InstantConsumer(BaseConsumer):
                 # Send message to broker for recording to database
                 message_data.pop("message_data")
                 await send_message_to_broker(message_data, settings.instant_notification_queue)
-
 
             except Exception as e:
                 await message.reject(requeue=False)

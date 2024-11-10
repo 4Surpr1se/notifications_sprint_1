@@ -37,7 +37,7 @@ class RoleService:
             # Validate role_data
             role = RoleCreate(**role_data)
 
-        except ValidationError as e:
+        except ValidationError:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail="All the required fields must be filled in.",
@@ -74,7 +74,7 @@ class RoleService:
             # Validate role UUID
             validated_role_id = RoleId(id=role_id)
 
-        except ValidationError as e:
+        except ValidationError:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail="Enter correct UUID.",

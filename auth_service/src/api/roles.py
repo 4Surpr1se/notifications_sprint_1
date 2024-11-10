@@ -82,7 +82,7 @@ async def delete_role(
 
     return JSONResponse(
         status_code=HTTPStatus.OK,
-        content={"detail": f"Role successfully deleted."}
+        content={"detail": "Role successfully deleted."}
     )
 
 
